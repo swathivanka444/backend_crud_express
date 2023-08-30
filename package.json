@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "CI='' run build"
+    "build": "npm i"
   },
   "keywords": [],
   "author": "",
