@@ -11,15 +11,9 @@ router.post("/AddTask", async (req, res) => {
         return res.status(400).json({ error: "Please fill in both title and description." });
     }
     try {
-        const pretask = await tasks.findOne({ description: description });
-        if (pretask) {
-            return res.status(400).json({ error: "This task is already present." });
-        } else {
-            const addtask = new tasks({ title, description, mark });
-            const savedTask = await addtask.save();
-            return res.status(201).json(savedTask);
-        }
-
+        const addtask = new tasks({ title, description, mark });
+        const savedTask = await addtask.save();
+        return res.status(201).json(savedTask);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Internal server error." });
