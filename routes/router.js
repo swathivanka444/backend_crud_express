@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const tasks = require("../models/taskSchema");
+const users = require("../models/usersSchema");
 const mongoose = require('mongoose');
 router.use(express.json()); 
 //post API
@@ -24,6 +25,58 @@ router.post("/AddTask", async (req, res) => {
         res.status(500).json({ error: "Internal server error." });
     }
 });
+
+
+router.post("/AddUser", async (req, res) => {
+    const { email,password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Please fill in both email and password." });
+    }
+    try {
+        const preuser = await users.findOne({email: email });
+        if (preuser) {
+            return res.status(400).json({ error: "This user is already present." });
+        } else {
+            const adduser = new users({ email,password });
+            const savedUser = await adduser.save();
+            console.log(savedUser)
+            return res.status(201).json(savedUser);
+        }
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
+router.post("/LoginUser", async (req, res) => {
+    const { email,password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Please fill in both email and password." });
+    }
+    try {
+        const preuser = await users.findOne({email: email });
+    
+        if (preuser) {
+            if(preuser.password==password)
+            {
+                return res.status(200).json({ messsage: "Login Successfull" });
+            }
+            else{
+                return res.status(401).json({ messsage: "Incorrect Password" });
+            }
+            
+        } else {
+          
+            return res.status(400).json({ messsage: "User does not exist " });
+        }
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+
 router.get('/AllTasks', async (req, res) => {
     try {
         const { taskId } = req.query;
